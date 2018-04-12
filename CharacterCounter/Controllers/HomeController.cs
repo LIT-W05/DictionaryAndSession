@@ -3,28 +3,40 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using CharacterCounter.Models;
 
 namespace CharacterCounter.Controllers
 {
     public class HomeController : Controller
     {
-        public ActionResult Index()
+        public ActionResult Index(string text)
         {
-            return View();
+            HomePageViewModel viewModel = new HomePageViewModel();
+            if (!String.IsNullOrEmpty(text))
+            {
+                viewModel.Text = text;
+                viewModel.CharacterCounts = CountCharacters(text);
+            }
+            return View(viewModel);
         }
 
-        public ActionResult About()
+        private Dictionary<char, int> CountCharacters(string text)
         {
-            ViewBag.Message = "Your application description page.";
+            Dictionary<char, int> counts = new Dictionary<char, int>();
+            foreach (char c in "ABCDEFGHIJKLMNOPQRSTUVWXYZ")
+            {
+                counts.Add(c, 0);
+            }
 
-            return View();
-        }
+            foreach (char c in text.ToUpper())
+            {
+                if (counts.ContainsKey(c))
+                {
+                    counts[c]++;
+                }
+            }
 
-        public ActionResult Contact()
-        {
-            ViewBag.Message = "Your contact page.";
-
-            return View();
+            return counts;
         }
     }
 }
